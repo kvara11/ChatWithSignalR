@@ -1,3 +1,4 @@
+using ChatWithSignalR.Server.Hubs;
 using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+// add signalR and transfer type
+builder.Services.AddSignalR();
+builder.Services.AddResponseCompression(option => 
+    option.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] {"application/octet-stream"})
+);
 
 var app = builder.Build();
 
@@ -31,6 +38,9 @@ app.UseRouting();
 
 app.MapRazorPages();
 app.MapControllers();
+
+// map chathub url
+app.MapHub<ChatHub>("/chathub");
 app.MapFallbackToFile("index.html");
 
 app.Run();
